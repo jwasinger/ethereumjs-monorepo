@@ -1,6 +1,7 @@
 const async = require('async')
 const VM = require('../index.js')
 const testUtil = require('./util')
+const ethUtil = require('ethereumjs-util')
 const Trie = require('merkle-patricia-tree/secure')
 
 function parseTestCases (forkConfig, testData) {
@@ -47,7 +48,10 @@ function runTestCase (options, testData, t, cb) {
             e = eventObj
             e['opcode'] = e.opcode.name
             e['cache'] = e['account'] = ''
-            console.log('gas=' + e['gasLeft'].toString(10) + ' pc=' + e['pc'] + ' depth=' + e['depth'] + ' op=' + e['opcode'])
+            var stack = e.stack.map(function(e) { return ethUtil.bufferToInt(e) })
+            var msg = 'gas=' + e['gasLeft'].toString(10) + ' pc=' + e['pc'] + ' depth=' + e['depth']
+            msg += ' op=' + e['opcode'] + ' stack=[' + stack + ']'
+            console.log(msg)
           })
         }
         
