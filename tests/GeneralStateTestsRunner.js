@@ -21,7 +21,7 @@ function parseTestCases (forkConfig, testData) {
   return testCases
 }
 
-function runTestCase (testData, t, cb) {
+function runTestCase (options, testData, t, cb) {
   const state = new Trie()
   let block, vm
 
@@ -42,6 +42,15 @@ function runTestCase (testData, t, cb) {
       }
 
       if (tx.validate()) {
+        if (options.debug) {
+          vm.on('step', function(eventObj) {
+            e = eventObj
+            e['opcode'] = e.opcode.name
+            e['cache'] = e['account'] = ''
+            console.log('gas=' + e['gasLeft'].toString(10) + ' pc=' + e['pc'] + ' depth=' + e['depth'] + ' op=' + e['opcode'])
+          })
+        }
+        
         vm.runTx({
           tx: tx,
           block: block
@@ -74,6 +83,6 @@ function runTestCase (testData, t, cb) {
 module.exports = function runStateTest (options, testData, t, cb) {
   const testCases = parseTestCases(options.forkConfig, testData)
   async.eachSeries(testCases,
-                  (testCase, done) => runTestCase(testCase, t, done),
+                  (testCase, done) => runTestCase(options, testCase, t, done),
                   cb)
 }
