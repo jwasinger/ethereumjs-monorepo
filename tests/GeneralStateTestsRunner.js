@@ -44,18 +44,17 @@ function runTestCase (options, testData, t, cb) {
 
       if (tx.validate()) {
         if (options.debug) {
-          vm.on('step', function(eventObj) {
-            e = eventObj
+          vm.on('step', function (e) {
             e['opcode'] = e.opcode.name
             e['cache'] = e['account'] = ''
-            var stack = e.stack.map(function(e) { return ethUtil.bufferToInt(e) })
-            var memory = e.memory.map(function(e) { return ethUtil.bufferToHex(e).substr(2) })
+            var stack = e.stack.map(function (e) { return ethUtil.bufferToInt(e) })
+            var memory = e.memory.map(function (e) { return ethUtil.bufferToHex(e).substr(2) })
             var msg = 'gas=' + e['gasLeft'].toString(10) + ' pc=' + e['pc'] + ' depth=' + e['depth']
             msg += ' op=' + e['opcode'] + ' stack=[' + stack + ']' + ' memory=' + memory
             console.log(msg)
           })
         }
-        
+
         vm.runTx({
           tx: tx,
           block: block
