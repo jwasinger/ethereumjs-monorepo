@@ -49,8 +49,9 @@ function runTestCase (options, testData, t, cb) {
             e['opcode'] = e.opcode.name
             e['cache'] = e['account'] = ''
             var stack = e.stack.map(function(e) { return ethUtil.bufferToInt(e) })
+            var memory = e.memory.map(function(e) { return ethUtil.bufferToHex(e).substr(2) })
             var msg = 'gas=' + e['gasLeft'].toString(10) + ' pc=' + e['pc'] + ' depth=' + e['depth']
-            msg += ' op=' + e['opcode'] + ' stack=[' + stack + ']'
+            msg += ' op=' + e['opcode'] + ' stack=[' + stack + ']' + ' memory=' + memory
             console.log(msg)
           })
         }
