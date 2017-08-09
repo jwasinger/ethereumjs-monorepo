@@ -62,7 +62,7 @@ function runTestCase (options, testData, t, cb) {
               'opName': e.opcode.name
             }
 
-            console.log(JSON.stringify(opTrace)) 
+            console.log(JSON.stringify(opTrace))
           })
         }
         vm.runTx({
