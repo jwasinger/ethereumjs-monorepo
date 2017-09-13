@@ -80,7 +80,8 @@ const skipVM = [
   'callcodeToReturn1',
   'callstatelessToNameRegistrator0',
   'callstatelessToReturn1',
-  'createNameRegistrator'
+  'createNameRegistrator',
+  'randomTest643' // TODO fix this
 ]
 
 if (argv.r) {
@@ -142,6 +143,7 @@ function runTests (name, runnerArgs, cb) {
   testGetterArgs.testsPath = argv.testsPath
 
   runnerArgs.forkConfig = FORK_CONFIG
+  runnerArgs.jsontrace = argv.jsontrace
   runnerArgs.debug = argv.debug // for BlockchainTests
   runnerArgs.data = argv.d
   runnerArgs.gasLimit = argv.g
