@@ -15,6 +15,7 @@ exports.dumpState = function (state, cb) {
     statedump[data.key.toString('hex')] = {
       balance: new BN(account.balance).toString(),
       nonce: new BN(account.nonce).toString(),
+      codeHash: account.codeHash.toString('hex'),
       stateRoot: account.stateRoot.toString('hex')
     }
   })
