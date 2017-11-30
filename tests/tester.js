@@ -12,7 +12,8 @@ const skipBroken = [
   'TransactionCollisionToEmptyButCode', // temporary till fixed (2017-09-21)
   'TransactionCollisionToEmptyButNonce', // temporary till fixed (2017-09-21)
   'RevertDepthCreateAddressCollision', // test case is wrong
-  'randomStatetest642' // BROKEN, rustbn.js error
+  'randomStatetest642', // BROKEN, rustbn.js error
+  //'randomStatetest643' // BROKEN, breaks tests run (leave at the end), rustbn.js error
 ]
 // tests skipped due to system specifics / design considerations
 const skipPermanent = [
@@ -107,7 +108,11 @@ const skipVM = [
 if (argv.r) {
   randomized(argv.r, argv.v)
 } else if (argv.s) {
-  runTests('GeneralStateTests', argv)
+  if (argv.ewasm) {
+    runTests('EWASMStateTests', argv)
+  } else {
+    runTests('GeneralStateTests', argv)
+  }
 } else if (argv.v) {
   runTests('VMTests', argv)
 } else if (argv.b) {
@@ -216,6 +221,11 @@ function runTests (name, runnerArgs, cb) {
   } else {
     tape(name, t => {
       const runner = require(`./${name}Runner.js`)
+
+      //dirty little hack here =)
+      if (name == 'EWASMStateTests') {
+        name = 'GeneralStateTests'
+      }
       testing.getTestsFromArgs(name, (fileName, testName, test) => {
         return new Promise((resolve, reject) => {
           if (name === 'VMTests') {

@@ -28,7 +28,9 @@
     "memdown": "^1.1.0",
     "minimist": "^1.1.1",
     "standard": "^10.0.0",
-    "tape": "4.6.3"
+    "tape": "4.6.3",
+    "evm2wasm": "git+https://github.com/jwasinger/evm2wasm",
+    "ewasm-kernel": "git+https://github.com/jwasinger/ewasm-kernel"
   },
   "browserify": {
     "transform": [
@@ -44,7 +46,8 @@
   },
   "scripts": {
     "testVM": "node ./tests/tester -v",
-    "testState": "node ./tests/tester -s",
+    "testState": "node ./tests/tester -s --file 'randomStatetest643'",
+    "testStateEWASM": "node inspect ./tests/tester -s --ewasm",
     "testBlockchain": "node --stack-size=1500 ./tests/tester -b --excludeDir='GeneralStateTests'",
     "testBlockchainGeneralStateTests": "node --stack-size=1500 ./tests/tester -b --dir='GeneralStateTests'",
     "testBlockchainBlockGasLimit": "node --stack-size=1500 ./tests/tester -b --dir='bcBlockGasLimitTest'",
