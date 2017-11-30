@@ -7,7 +7,7 @@ const BN = ethUtil.BN
 const evm2wasm = require('evm2wasm').evm2wasm
 
 async function parseTestCases (forkConfig, testData, data, gasLimit, value) {
-  let testCases = testData['post'][forkConfig].map(testCase => {
+  let testCases = await Promise.all(testData['post'][forkConfig].map(async (testCase) => {
     let testIndexes = testCase['indexes']
     let tx = Object.assign({}, testData.transaction)
     if (data !== undefined && testIndexes['data'] !== data) {
@@ -22,11 +22,13 @@ async function parseTestCases (forkConfig, testData, data, gasLimit, value) {
       return null
     }
 
-		// convert transaction data to wasm
-    testData.transaction.data[testIndexes['data']]
-		let txData = Buffer.from(testData.transaction.data[testIndexes['data']].slice(2), 'hex')
+    let txData = testData.transaction.data[testIndexes['data']]
+    if (txData) {
+      txData = await evm2wasm(Buffer.from(txData.split(2), 'hex'))
+      debugger
+    }
 
-		tx.data = await evm2wasm(txData)
+    tx.data = txData
 
     tx.gasLimit = testData.transaction.gasLimit[testIndexes['gas']]
     tx.value = testData.transaction.value[testIndexes['value']]
@@ -40,7 +42,7 @@ async function parseTestCases (forkConfig, testData, data, gasLimit, value) {
       'env': testData['env'],
       'pre': testData['pre']
     }
-  })
+  }))
 
   testCases = testCases.filter(testCase => {
     return testCase != null
@@ -120,8 +122,9 @@ function runTestCase (options, testData, t, cb) {
 }
 
 module.exports = function runStateTest (options, testData, t, cb) {
-  const testCases = parseTestCases(options.forkConfig, testData, options.data, options.gasLimit, options.value)
-  async.eachSeries(testCases,
-                  (testCase, done) => runTestCase(options, testCase, t, done),
-                  cb)
+  const testCases = parseTestCases(options.forkConfig, testData, options.data, options.gasLimit, options.value).then(testCases => {
+    async.eachSeries(testCases,
+                    (testCase, done) => runTestCase(options, testCase, t, done),
+                    cb)
+  })
 }
