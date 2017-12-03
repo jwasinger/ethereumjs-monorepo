@@ -25,7 +25,7 @@ async function parseTestCases (forkConfig, testData, data, gasLimit, value) {
     let txData = testData.transaction.data[testIndexes['data']]
     if (txData) {
       txData = await evm2wasm(Buffer.from(txData.split(2), 'hex'))
-      debugger
+      txData = Buffer.from(txData.buffer, 'hex').toString('hex')
     }
 
     tx.data = txData
@@ -34,13 +34,26 @@ async function parseTestCases (forkConfig, testData, data, gasLimit, value) {
     tx.value = testData.transaction.value[testIndexes['value']]
 
     //convert pre-state account code to wasm
-		debugger
+
+    let preCode = await Promise.all(Object.keys(testData['pre']).map(async (key) => {
+      let code = testData['pre'][key].code
+      if (code) {
+        code = await evm2wasm(testData['pre'][key].code)
+        code = Buffer.from(code.buffer, 'hex').toString('hex')
+      }
+      return {addr: key, code: code }
+    }))
+
+    let pre = testData['pre']
+    for (let i = 0; i < preCode.length; i++) {
+      pre[preCode[i].addr].code = preCode[i].code
+    }
 
     return {
       'transaction': tx,
       'postStateRoot': testCase['hash'],
       'env': testData['env'],
-      'pre': testData['pre']
+      'pre': pre
     }
   }))
 
