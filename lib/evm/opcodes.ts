@@ -159,6 +159,7 @@ const opcodes: OpcodeList = {
   0xa3: { name: 'LOG', fee: 375, isAsync: false },
   0xa4: { name: 'LOG', fee: 375, isAsync: false },
 
+
   // '0xf0' range - closures
   0xf0: { name: 'CREATE', fee: 32000, isAsync: true },
   0xf1: { name: 'CALL', fee: 700, isAsync: true },
@@ -182,8 +183,16 @@ const istanbulOpcodes: OpcodeList = {
   0x54: { name: 'SLOAD', fee: 800, isAsync: true },
 }
 
+const evm384Opcodes: OpcodeList = {
+  0xc0: { name: 'ADDMOD384', fee: 3, isAsync: false},
+  0xc1: { name: 'SUBMOD384', fee: 3, isAsync: false},
+  0xc2: { name: 'MULMODMONT84', fee: 7, isAsync: false},
+}
+
 export function getOpcodesForHF(common: Common) {
-  if (common.gteHardfork('istanbul')) {
+  if (commont.gteHardfork('evm384')) {
+    return { ...opcodes, ...istanbulOpcodes, ...evm384Opcodes }
+  } else if (common.gteHardfork('istanbul')) {
     return { ...opcodes, ...istanbulOpcodes }
   } else {
     return { ...opcodes }

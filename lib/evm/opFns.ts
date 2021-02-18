@@ -620,6 +620,21 @@ export const handlers: { [k: string]: OpHandler } = {
     runState.eei.log(mem, topicsCount, topicsBuf)
   },
 
+  // 0xc0 ADDMOD384
+  ADDMOD384: async function(runState: RunState) {
+    const packed_params = runState.stack.pop()
+  },
+  // 0xc1 SUBMOD384
+  SUBMOD384: async function(runState: RunState) {
+
+  },
+  // 0xc2 SUBMOD384
+  MULMODMONT384: async function(runState: RunState) {
+
+  },
+  // 0xc1 SUBMOD384
+  // 0xc2 MULMODMONT384
+
   // '0xf0' range - closures
   CREATE: async function(runState: RunState) {
     if (runState.eei.isStatic()) {
